@@ -19,7 +19,7 @@ function Login({ setIsAuthenticated }) {
 
   const handleLogin = () => {
     axios
-      .post("http://localhost:5000/api/login", credentials)
+      .post("https://mern-backend-s5b5.onrender.com/api/login", credentials)
       .then((response) => {
         console.log("Login successful:", response.data.message);
         localStorage.setItem("token", response.data.token);

@@ -7,7 +7,7 @@ function Home({ isAuthenticated }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/posts")
+      .get("https://mern-backend-s5b5.onrender.com/api/posts")
       .then((response) => setPosts(response.data))
       .catch((error) => console.error("Error fetching posts:", error));
   }, []);
@@ -19,7 +19,7 @@ function Home({ isAuthenticated }) {
     }
 
     axios
-      .post(`http://localhost:5000/api/posts/like/${postId}`)
+      .post(`https://mern-backend-s5b5.onrender.com/api/posts/like/${postId}`)
       .then((response) => {
         const updatedPosts = posts.map((post) =>
           post._id === postId ? response.data : post
@@ -36,9 +36,12 @@ function Home({ isAuthenticated }) {
     }
 
     axios
-      .post(`http://localhost:5000/api/posts/comment/${postId}`, {
-        text: commentText,
-      })
+      .post(
+        `https://mern-backend-s5b5.onrender.com/api/posts/comment/${postId}`,
+        {
+          text: commentText,
+        }
+      )
       .then((response) => {
         const updatedPosts = posts.map((post) =>
           post._id === postId ? response.data : post
@@ -52,7 +55,7 @@ function Home({ isAuthenticated }) {
   const handleDelete = async (postId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/posts/${postId}`
+        `https://mern-backend-s5b5.onrender.com/api/posts/${postId}`
       );
       console.log("Post deleted:", response.data);
       // Handle UI update or refresh after successful deletion
@@ -79,14 +82,14 @@ function Home({ isAuthenticated }) {
               {post.file.includes(".mp4") ? (
                 <video width="320" height="240" controls>
                   <source
-                    src={`http://localhost:5000/uploads/${post.file}`}
+                    src={`https://mern-backend-s5b5.onrender.com/uploads/${post.file}`}
                     type="video/mp4"
                   />
                   Your browser does not support the video tag.
                 </video>
               ) : (
                 <img
-                  src={`http://localhost:5000/uploads/${post.file}`}
+                  src={`https://mern-backend-s5b5.onrender.com/uploads/${post.file}`}
                   alt="Post Media"
                 />
               )}

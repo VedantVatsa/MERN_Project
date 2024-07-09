@@ -21,7 +21,7 @@ function Register() {
 
   const handleRegister = () => {
     axios
-      .post("http://localhost:5000/api/register", newUser)
+      .post("https://mern-backend-s5b5.onrender.com/api/register", newUser)
       .then((response) => {
         console.log("User registered successfully");
         setSuccess(true);
