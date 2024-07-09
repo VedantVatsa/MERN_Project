@@ -1,3 +1,5 @@
+// App.jsx
+
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./Home";
@@ -45,7 +47,9 @@ function App() {
               </>
             ) : (
               <li>
-                <button onClick={handleLogout}>Logout</button>
+                <button className="btn" onClick={handleLogout}>
+                  Logout
+                </button>
               </li>
             )}
           </ul>

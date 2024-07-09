@@ -1,0 +1,43 @@
+/* Create Post Form */
+.create-post {
+  background: var(--secondary-color);
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+  padding: 30px;
+  margin-top: 30px;
+}
+
+.create-post h2 {
+  color: var(--primary-color);
+}
+
+.create-post input,
+.create-post textarea {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 1px solid var(--input-border);
+  border-radius: 5px;
+  background: var(--input-background);
+  transition: border var(--transition-speed);
+}
+
+.create-post input:focus,
+.create-post textarea:focus {
+  border: 1px solid var(--primary-color);
+  outline: none;
+}
+
+.create-post button {
+  background: var(--primary-color);
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background var(--transition-speed);
+}
+
+.create-post button:hover {
+  background: var(--button-hover-color);
+}

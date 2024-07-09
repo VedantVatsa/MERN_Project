@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./App.css";
 
 function CreatePost() {
   const [newPost, setNewPost] = useState({
@@ -45,22 +46,33 @@ function CreatePost() {
   return (
     <div className="create-post">
       <h2>Create a Post</h2>
-      {postSuccess && <p>Post created successfully!</p>}
+      {postSuccess && (
+        <p className="success-message">Post created successfully!</p>
+      )}
       <input
         type="text"
         name="title"
         placeholder="Title"
         value={newPost.title}
         onChange={handleInputChange}
+        className="input-field"
       />
       <textarea
         name="content"
         placeholder="Content"
         value={newPost.content}
         onChange={handleInputChange}
+        className="input-field"
       ></textarea>
-      <input type="file" name="file" onChange={handleFileChange} />
-      <button onClick={handlePostSubmit}>Post</button>
+      <input
+        type="file"
+        name="file"
+        onChange={handleFileChange}
+        className="file-input"
+      />
+      <button onClick={handlePostSubmit} className="submit-button">
+        Post
+      </button>
     </div>
   );
 }

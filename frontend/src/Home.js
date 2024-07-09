@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import "./Styles/Home.css";
 function Home({ isAuthenticated }) {
-  const [commentInput, setCommentInput] = useState("");
+  const [commentInputs, setCommentInputs] = useState({});
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -44,9 +44,27 @@ function Home({ isAuthenticated }) {
           post._id === postId ? response.data : post
         );
         setPosts(updatedPosts);
-        setCommentInput("");
+        setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
       })
       .catch((error) => console.error("Error adding comment:", error));
+  };
+
+  const handleDelete = async (postId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/posts/${postId}`
+      );
+      console.log("Post deleted:", response.data);
+      // Handle UI update or refresh after successful deletion
+      const updatedPosts = posts.filter((post) => post._id !== postId);
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      // Handle error display or notification to the user
+    }
+  };
+  const handleCommentInputChange = (postId, value) => {
+    setCommentInputs((prev) => ({ ...prev, [postId]: value }));
   };
 
   return (
@@ -86,15 +104,18 @@ function Home({ isAuthenticated }) {
             type="text"
             placeholder="Add a comment"
             className="comment-input"
-            value={commentInput}
-            onChange={(e) => setCommentInput(e.target.value)}
+            value={commentInputs[post._id] || ""}
+            onChange={(e) => handleCommentInputChange(post._id, e.target.value)}
           />
           <button
-            onClick={() => handleAddComment(post._id, commentInput)}
+            onClick={() =>
+              handleAddComment(post._id, commentInputs[post._id] || "")
+            }
             className="comment-button"
           >
             Add Comment
           </button>
+          <button onClick={() => handleDelete(post._id)}>Delete</button>
         </div>
       ))}
     </div>
