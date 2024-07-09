@@ -14,10 +14,13 @@ app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // MongoDB connection
-mongoose.connect("mongodb://localhost:27017/CRUD_Project", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(
+  "mongodb+srv://vedantvatsa:0123456789@cluster0.qkoan.mongodb.net/CRUD_Project",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
 
 // Define Post schema and model
 const postSchema = new mongoose.Schema({
@@ -174,6 +177,25 @@ app.post("/api/posts/comment/:postId", async (req, res) => {
     res.json(post);
   } catch (error) {
     console.error("Error adding comment:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Delete a post
+// Delete a post
+app.delete("/api/posts/:postId", async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    await post.deleteOne(); // This should work if `post` is a valid document
+    res.json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting post:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
