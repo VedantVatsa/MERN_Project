@@ -31,11 +31,21 @@ function Register() {
       })
       .catch((error) => {
         console.error("Error registering user:", error);
-        const errorMessage =
-          error.response && error.response.data && error.response.data.error
-            ? error.response.data.error
-            : "Registration failed. Please try again.";
-        setError(errorMessage);
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errmsg
+        ) {
+          if (error.response.data.errmsg.includes("duplicate key error")) {
+            setError(
+              "Username or Email already exists. Please choose another."
+            );
+          } else {
+            setError("Registration failed. Please try again.");
+          }
+        } else {
+          setError("Registration failed. Please try again.");
+        }
       });
   };
 

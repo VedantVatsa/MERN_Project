@@ -21,21 +21,10 @@ mongoose.connect(
 );
 
 // Register route
+// Register route
 app.post("/api/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
-
-    // Check if email already exists
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) {
-      return res.status(400).json({ error: "Email already exists" });
-    }
-
-    // Check if username already exists
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
-      return res.status(400).json({ error: "Username already exists" });
-    }
 
     // Create new user
     const newUser = new User({ username, email, password });
@@ -43,6 +32,12 @@ app.post("/api/register", async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (error) {
+    if (error.code === 11000 && error.keyPattern && error.keyPattern.username) {
+      // Duplicate key error handling for username
+      return res
+        .status(400)
+        .json({ error: "Username already exists. Please choose another." });
+    }
     console.error("Error registering user:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
