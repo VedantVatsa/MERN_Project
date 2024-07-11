@@ -66,3 +66,7 @@
   background-color: #5948d6;
   transform: translateY(-3px);
 }
+.error-message {
+  color: red;
+  margin-top: 5px;
+}

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./App.css";
+import "../App.css";
 
 function CreatePost() {
   const [newPost, setNewPost] = useState({
     title: "",
     content: "",
-    file: null,
   });
   const [postSuccess, setPostSuccess] = useState(false);
 
@@ -15,26 +14,22 @@ function CreatePost() {
     setNewPost({ ...newPost, [name]: value });
   };
 
-  const handleFileChange = (event) => {
-    setNewPost({ ...newPost, file: event.target.files[0] });
-  };
-
   const handlePostSubmit = () => {
-    const formData = new FormData();
-    formData.append("title", newPost.title);
-    formData.append("content", newPost.content);
-    formData.append("file", newPost.file);
+    const postData = {
+      title: newPost.title,
+      content: newPost.content,
+    };
 
     const token = localStorage.getItem("token");
 
     axios
-      .post("https://mern-backend-s5b5.onrender.com/api/posts", formData, {
+      .post("https://mern-backend-s5b5.onrender.com/api/posts", postData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        setNewPost({ title: "", content: "", file: null });
+        setNewPost({ title: "", content: "" });
         setPostSuccess(true);
         setTimeout(() => {
           setPostSuccess(false);
@@ -64,12 +59,6 @@ function CreatePost() {
         onChange={handleInputChange}
         className="input-field"
       ></textarea>
-      {/*<input
-        type="file"
-        name="file"
-        onChange={handleFileChange}
-        className="file-input"
-      />*/}
       <button onClick={handlePostSubmit} className="submit-button">
         Post
       </button>

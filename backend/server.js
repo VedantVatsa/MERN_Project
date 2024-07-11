@@ -2,16 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const multer = require("multer");
-const path = require("path");
-
+const jwt = require("jsonwebtoken");
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+const User = require("./models/User");
+const Post = require("./models/Post");
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // MongoDB connection
 mongoose.connect(
@@ -22,37 +20,21 @@ mongoose.connect(
   }
 );
 
-// Define Post schema and model
-const postSchema = new mongoose.Schema({
-  title: String,
-  content: String,
-  file: String,
-  likes: { type: Number, default: 0 },
-  comments: [{ text: String }],
-});
-
-// Check if the model is already defined to avoid OverwriteModelError
-const Post = mongoose.models.Post || mongoose.model("Post", postSchema);
-
-// User schema and model for authentication
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-});
-
-// Check if the model is already defined to avoid OverwriteModelError
-const User = mongoose.models.User || mongoose.model("User", userSchema);
-
-// Register route - storing passwords in plain text (not recommended for production)
+// Register route
 app.post("/api/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+    // Check if email already exists
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
+
+    // Check if username already exists
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ error: "Username already exists" });
     }
 
     // Create new user
@@ -83,7 +65,9 @@ app.post("/api/login", async (req, res) => {
     }
 
     // Generate a token (in a real application, use JWT or another method)
-    const token = "your-placeholder-token"; // Replace with actual token generation
+    const token = jwt.sign({ id: user._id }, "123456", {
+      expiresIn: "1h",
+    });
 
     res.json({ message: "Login successful", token });
   } catch (error) {
@@ -91,8 +75,6 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-// Post-related routes (already defined in your code)
 
 // Get all posts
 app.get("/api/posts", async (req, res) => {
@@ -105,25 +87,9 @@ app.get("/api/posts", async (req, res) => {
   }
 });
 
-// Create a new post
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-
-const upload = multer({ storage: storage });
-
-app.post("/api/posts", upload.single("file"), async (req, res) => {
+app.post("/api/posts", async (req, res) => {
   try {
     const { title, content } = req.body;
-    const file = req.file ? req.file.filename : undefined;
 
     if (!title || !content) {
       return res
@@ -131,7 +97,7 @@ app.post("/api/posts", upload.single("file"), async (req, res) => {
         .json({ error: "Title and content are required fields" });
     }
 
-    const post = new Post({ title, content, file });
+    const post = new Post({ title, content });
     await post.save();
     res.status(201).json(post);
   } catch (error) {
@@ -181,7 +147,6 @@ app.post("/api/posts/comment/:postId", async (req, res) => {
   }
 });
 
-// Delete a post
 // Delete a post
 app.delete("/api/posts/:postId", async (req, res) => {
   try {

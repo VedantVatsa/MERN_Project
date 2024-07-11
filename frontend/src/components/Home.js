@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Styles/Home.css";
+import "../Styles/Home.css";
+
 function Home({ isAuthenticated }) {
   const [commentInputs, setCommentInputs] = useState({});
   const [posts, setPosts] = useState([]);
@@ -53,19 +54,23 @@ function Home({ isAuthenticated }) {
   };
 
   const handleDelete = async (postId) => {
+    if (!isAuthenticated) {
+      alert("You need to log in to delete a post.");
+      return;
+    }
+
     try {
       const response = await axios.delete(
         `https://mern-backend-s5b5.onrender.com/api/posts/${postId}`
       );
       console.log("Post deleted:", response.data);
-      // Handle UI update or refresh after successful deletion
       const updatedPosts = posts.filter((post) => post._id !== postId);
       setPosts(updatedPosts);
     } catch (error) {
       console.error("Error deleting post:", error);
-      // Handle error display or notification to the user
     }
   };
+
   const handleCommentInputChange = (postId, value) => {
     setCommentInputs((prev) => ({ ...prev, [postId]: value }));
   };
@@ -77,24 +82,6 @@ function Home({ isAuthenticated }) {
         <div key={post._id} className="post">
           <h3>{post.title}</h3>
           <p>{post.content}</p>
-          {post.file && (
-            <div>
-              {post.file.includes(".mp4") ? (
-                <video width="320" height="240" controls>
-                  <source
-                    src={`https://mern-backend-s5b5.onrender.com/uploads/${post.file}`}
-                    type="video/mp4"
-                  />
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <img
-                  src={`https://mern-backend-s5b5.onrender.com/uploads/${post.file}`}
-                  alt="Post Media"
-                />
-              )}
-            </div>
-          )}
           <p>Likes: {post.likes}</p>
           <button onClick={() => handleLike(post._id)}>Like</button>
           <p>Comments: {post.comments.length}</p>

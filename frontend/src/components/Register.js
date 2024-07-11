@@ -1,9 +1,7 @@
-// Register.jsx
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Styles/Register.css";
+import "../Styles/Register.css";
 
 function Register() {
   const [newUser, setNewUser] = useState({
@@ -12,6 +10,7 @@ function Register() {
     password: "",
   });
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (event) => {
@@ -25,11 +24,19 @@ function Register() {
       .then((response) => {
         console.log("User registered successfully");
         setSuccess(true);
+        setError(""); // Clear any previous errors
         setTimeout(() => {
           navigate("/login"); // Redirect to login page after 2 seconds
         }, 2000);
       })
-      .catch((error) => console.error("Error registering user:", error));
+      .catch((error) => {
+        console.error("Error registering user:", error);
+        const errorMessage =
+          error.response && error.response.data && error.response.data.error
+            ? error.response.data.error
+            : "Registration failed. Please try again.";
+        setError(errorMessage);
+      });
   };
 
   const validateEmail = (email) => {
@@ -42,8 +49,7 @@ function Register() {
     if (validateEmail(newUser.email)) {
       handleRegister();
     } else {
-      console.error("Invalid email format");
-      // Optionally, set an error state or display a message to the user
+      setError("Invalid email format");
     }
   };
 
@@ -55,6 +61,7 @@ function Register() {
           <p>Registration successful! Redirecting to login page...</p>
         ) : (
           <form onSubmit={handleSubmit}>
+            {error && <p className="error-message">{error}</p>}
             <div className="form-group">
               <input
                 type="text"

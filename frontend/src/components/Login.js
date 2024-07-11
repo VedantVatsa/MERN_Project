@@ -1,16 +1,14 @@
-// Login.jsx
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Styles/Login.css";
+import "../Styles/Login.css";
 
 function Login({ setIsAuthenticated }) {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
   });
-
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,9 +22,13 @@ function Login({ setIsAuthenticated }) {
         console.log("Login successful:", response.data.message);
         localStorage.setItem("token", response.data.token);
         setIsAuthenticated(true);
+        setError(""); // Clear any previous errors
         navigate("/"); // Redirect to home page
       })
-      .catch((error) => console.error("Error logging in:", error));
+      .catch((error) => {
+        console.error("Error logging in:", error);
+        setError("Login failed. Please check your email and password.");
+      });
   };
 
   const validateEmail = (email) => {
@@ -39,8 +41,7 @@ function Login({ setIsAuthenticated }) {
     if (validateEmail(credentials.email)) {
       handleLogin();
     } else {
-      console.error("Invalid email format");
-      // Optionally, set an error state or display a message to the user
+      setError("Invalid email format");
     }
   };
 
@@ -48,6 +49,7 @@ function Login({ setIsAuthenticated }) {
     <div className="login-container">
       <div className="login-form">
         <h2>Login</h2>
+        {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>

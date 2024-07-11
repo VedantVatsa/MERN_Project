@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./Home";
-import CreatePost from "./CreatePost";
-import Login from "./Login";
-import Register from "./Register";
+import Home from "./components/Home";
+import CreatePost from "./components/CreatePost";
+import Login from "./components/Login";
+import Register from "./components/Register";
 import "./App.css";
 
 function App() {
